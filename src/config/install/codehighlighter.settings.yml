@@ -1,0 +1,11 @@
+enabled_languages: { 'shBrushPhp.js' }
+use_autoloader: false
+theme: 'shThemeDefault.css'
+tagname: 'pre'
+legacy_mode: 0
+inject: 0
+pages: 'admin\nadmin/*\nuser\nuser/*\nimce\nimce/*\n'
+default_expressions: ''
+
+
+

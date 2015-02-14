@@ -1,0 +1,12 @@
+name: 'Code Highlighter'
+description: 'Integrates the Code Highlighter Javascript Library to your site.'
+package: 'CodeHighlighter'
+
+dependencies:
+  - libraries
+  - filter
+  
+configure: codehighlighter.admin_settings_form
+
+core: '8.x'
+type: module

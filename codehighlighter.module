@@ -1,0 +1,119 @@
+<?php
+
+/**
+ * @file
+ * 
+ * 
+ */
+
+use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Site\Settings;
+use Drupal\Core\Url;
+use Drupal\CodeHighlighter;
+
+/**
+ * Implements hook_permission().
+ */
+function codehighlighter_permission() {
+  return array(
+    SYNTAXHIGHLIGHTER_PHP_PERMISSION => array(
+      'title' => t('Use PHP for codehighlighter js/css code inject control'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+
+/**
+ * Implements hook_help().
+ */
+function codehighlighter_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'codehighlighter.admin_settings_form':
+      return Drupal\codehighlighter\CodeHighlighterManager::filter_tips(0, 0, TRUE);
+  
+    case 'help.page.codehighlighter':
+      return \Drupal\codehighlighter\CodeHighlighterManager::filter_tips(0, 0, TRUE);
+  }
+}
+
+
+
+
+
+/**
+ * Implements hook_filter_info()
+ * 
+ * declare the codehighlighter filter
+ */
+function codehighlighter_filter_info() {
+  $filters['codehighlighter'] = array(
+    'title' => t('Syntax highlighter'),
+    'description' => t('Process syntax highlighter filter code block'),
+    'tips callback' => 'CodeHighlighterController::filter_tips',
+    'prepare callback' => '_codehighlighter_do_filter_prepare',
+    'process callback' => '_codehighlighter_do_filter_process',
+    'cache' => TRUE,
+  );
+  return $filters;
+}
+
+
+/**
+ * Implements hook_libraries_info().
+ */
+function codehighlighter_libraries_info() {
+  $libraries['codehighlighter'] = array(
+    // Only used in administrative UI of Libraries API.
+    'name' => 'Syntax Highlighter',
+    'vendor url' => 'http://alexgorbatchev.com/CodeHighlighter/',
+    'download url' => 'http://alexgorbatchev.com/CodeHighlighter/download/',
+    'download' => array(
+      'type' => 'file',
+      'url' => 'http://alexgorbatchev.com/CodeHighlighter/download/download.php?sh_current',
+    ),
+    'path' => 'scripts',
+    'version arguments' => array(
+      'file' => 'scripts/shCore.js',
+      'pattern' => '@([0-9]+.[0-9]+.[0-9]+)@',
+      'lines' => 15,
+      'cols' => 30,
+    ),
+  );
+  return $libraries;
+}
+
+/**
+ * Install custom comment validate function
+ */
+function form_comment_form_alter(&$form, &$form_state, $form_id) {
+  $form['#validate'][] = '_codehighlighter_comment_validate';
+}
+
+/**
+ * Validate on the node input text to be sure there is no bad
+ * {codehighlighter} tags
+ */
+function node_validate($node, $form, &$form_state) {
+  if (isset($node->body)) {
+    foreach ($node->body as $lang => $v) {
+      if (_codehighlighter_format_has_codehighlighter_filter(isset($v[0]['format']) ? $v[0]['format'] : filter_fallback_format())) {
+        if (!empty($v[0]['summary'])) {
+          _codehighlighter_validate_input("body][$lang][0][summary", $v[0]['summary']);
+        }
+        _codehighlighter_validate_input("body][$lang][0][value", $v[0]['value']);
+      }
+    }
+  }
+}
+
+
+
+
+
+
+

@@ -1,0 +1,4 @@
+codehighlighter.admin_settings_form_tab:
+  route_name: codehighlighter.admin_settings_form
+  title: Syntax Highlighter Settings
+  base_route: codehighlighter.admin_settings_form

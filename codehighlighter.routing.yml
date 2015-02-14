@@ -1,0 +1,7 @@
+codehighlighter.admin_settings_form:
+  path: '/admin/config/content/codehighlighter'
+  defaults:
+    _form: '\Drupal\codehighlighter\Form\CodeHighlighterAdminSettingsForm'
+    _title: 'Syntax Highlighter'
+  requirements:
+    _permission: 'administer site configuration'
